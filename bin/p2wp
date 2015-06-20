@@ -3,26 +3,43 @@ import os
 import sys
 import getpass
 from publish2wp import publisher
+import argparse
 
 if __name__ == '__main__':
-    if len(sys.argv) < 2:
-        print "Wrong number of arguments. Syntax is p2wp <filename>"
+    parser = argparse.ArgumentParser(description='Publish to Wordpress')
+    parser.add_argument(
+        "input_file", help="Specify the input file")
+    parser.add_argument(
+        "status", help="Specify the status of post - draft or publish")
+    parser.add_argument("--site", help="Specify the website URL")
+    parser.add_argument("--username", help="Specify the username")
+    parser.add_argument("--password", help="Specify the password")
+    args = parser.parse_args()
+    inputfile = args.input_file
+    state = args.status
+    if state != 'draft' and state != 'publish':
+        print "use 'publish' or 'draft' as status"
         sys.exit(0)
-
-    if 'publish2wpsite' in os.environ:
+    if args.site:
+        site = args.site
+    elif 'publish2wpsite' in os.environ:
         site = os.environ['publish2wpsite']
     else:
         site = raw_input("Enter Site URL : ")
-    if 'publish2wpusername' in os.environ:
+    if args.username:
+        username = args.username
+    elif 'publish2wpusername' in os.environ:
         username = os.environ['publish2wpusername']
     else:
         username = raw_input("Enter Username : ")
-    if 'publish2wppassword' in os.environ:
+    if args.password:
+        password = args.password
+    elif 'publish2wppassword' in os.environ:
         password = os.environ['publish2wppassword']
     else:
         password = getpass.getpass(prompt="Enter Password : ")
 
-    wppublisher = publisher.publish2wp(username, password, site)
+    wppublisher = publisher.publish2wp(username, password, site, state)
     print "Connecting to " + site
     connectionstatus = wppublisher.connect()
     if connectionstatus != 0:
@@ -31,11 +48,13 @@ if __name__ == '__main__':
     else:
         print "Connected"
     print "Checking file"
-    filestatus = wppublisher.getfile(sys.argv[1])
+    filestatus = wppublisher.getfile(inputfile)
     if filestatus != 0:
         print filestatus
         sys.exit(0)
     else:
         print "File ok"
     result = wppublisher.publishit()
+    if result == 1:
+        result = "Done action : " + state
     print result
