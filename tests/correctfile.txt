@@ -1,0 +1,4 @@
+title:Sample
+content:Sample Content
+tags: sample,tags
+categories: sample,categories
