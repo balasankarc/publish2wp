@@ -1,0 +1,41 @@
+#!/usr/bin/python
+import os
+import sys
+import getpass
+from publish2wp import publisher
+
+if __name__ == '__main__':
+    if len(sys.argv) < 2:
+        print "Wrong number of arguments. Syntax is p2wp <filename>"
+        sys.exit(0)
+
+    if 'publish2wpsite' in os.environ:
+        site = os.environ['publish2wpsite']
+    else:
+        site = raw_input("Enter Site URL : ")
+    if 'publish2wpusername' in os.environ:
+        username = os.environ['publish2wpusername']
+    else:
+        username = raw_input("Enter Username : ")
+    if 'publish2wppassword' in os.environ:
+        password = os.environ['publish2wppassword']
+    else:
+        password = getpass.getpass(prompt="Enter Password : ")
+
+    wppublisher = publisher.publish2wp(username, password, site)
+    print "Connecting to " + site
+    connectionstatus = wppublisher.connect()
+    if connectionstatus != 0:
+        print connectionstatus
+        sys.exit(0)
+    else:
+        print "Connected"
+    print "Checking file"
+    filestatus = wppublisher.getfile(sys.argv[1])
+    if filestatus != 0:
+        print filestatus
+        sys.exit(0)
+    else:
+        print "File ok"
+    result = wppublisher.publishit()
+    print result
