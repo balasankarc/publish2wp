@@ -14,12 +14,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import getpass
 import wordpress_xmlrpc
 from wordpress_xmlrpc import Client, WordPressPost
 from wordpress_xmlrpc.methods import posts
-import os
-import sys
 import ssl
 
 
@@ -29,21 +26,23 @@ class publish2wp:
         '''Get details of the post to be published'''
         filecontent = postfile.readlines()
         filecontent = map(str.strip, filecontent)
-        if '#POSTTITLE#' in filecontent and '#POSTBODY#' in filecontent:
-            if filecontent[0] == '#POSTTITLE#':
-                title = filecontent[1]
+        postoptions = {}
+        option = ''
+        value = ''
+        for line in filecontent:
+            if ':' in line:
+                option = line.split(':')[0]
+                value = line.split(':')[1]
             else:
-                return "Wrong syntax for input file"
-            if filecontent[2] == '#POSTBODY#':
-                content = '\n'.join(filecontent[3:])
-            else:
-                return "Wrong syntax for input file"
-        return title, content
+                value = value + '\n' + line
+            postoptions[option] = value
+        return postoptions
 
-    def __init__(self, username, password, site):
+    def __init__(self, username, password, site, state):
         self.username = username
         self.password = password
         self.site = site
+        self.state = state
         if self.site[-1] != '/':
             self.site = self.site + '/'
         self.site = self.site + 'xmlrpc.php'
@@ -55,10 +54,24 @@ class publish2wp:
             self.postfile = open(filename)
         except:
             return "File not found"
+        postoptions = self.getpostdetails(self.postfile)
+        self.terms_names = {}
         try:
-            self.title, self.content = self.getpostdetails(self.postfile)
+            if 'title' not in postoptions or 'content' not in postoptions:
+                return 'Invalid Syntax for input file'
+            for option in postoptions:
+                if option == 'tags':
+                    tags = postoptions[option].split(',')
+                    tags = map(str.strip, tags)
+                    self.terms_names['post_tag'] = tags
+                elif option == 'categories':
+                    categories = postoptions[option].split(',')
+                    categories = map(str.strip, categories)
+                    self.terms_names['category'] = categories
+                else:
+                    setattr(self, option, postoptions[option])
         except:
-            return "Invalid Syntax for input file"
+            return 'Invalid Syntax for input file'
         return 0
 
     def connect(self):
@@ -75,12 +88,12 @@ class publish2wp:
         return 0
 
     def publishit(self):
-
         self.post = WordPressPost()
         self.post.title = self.title
         self.post.content = self.content
+        self.post.terms_names = self.terms_names
         self.post.id = self.client.call(posts.NewPost(self.post))
-        self.post.post_status = 'draft'
+        self.post.post_status = self.state
         self.result = self.client.call(posts.EditPost(self.post.id, self.post))
         if self.result is True:
-            return "Saved as draft"
+            return 1
