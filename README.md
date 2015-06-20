@@ -1,7 +1,11 @@
 publish2wp - CLI tool to publish posts to wordpress sites
 
+### Installation
+ 1. clone the repo - `git clone https://gitlab.com/balasankarc/publish2wp.git && cd publish2wp`
+ 2. `sudo python setup.py install`
+
 ### Usage
-python publish2wp \<input file>
+p2wp \<input file>
 
 ### Setting Credentials
 Credentials may be set using three environment variables - 
@@ -39,5 +43,9 @@ This post will be rendered as shown [here](linktoscreenshot)
 
 #### Options
 TODO : Add options
+
+### Running Tests
+publish2wp uses nose to run tests. To run tests, go to the cloned directory and run `nosetests` command.
+
 ### License
 publish2wp is released under GPLv3+
