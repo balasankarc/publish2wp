@@ -28,9 +28,9 @@ Warning : Don't store your password in environment variables. It is a security t
 
 ### Input File syntax
 Input file to the program should follow specific syntax. The program uses the following syntax  
-> option1:value1  
-> option2:value2  
-> option3:value3,value4  
+> option1#:#value1  
+> option2#:#value2  
+> option3#:#value3,value4  
 > .  
 > .  
 > .  
@@ -38,12 +38,12 @@ Input file to the program should follow specific syntax. The program uses the fo
 Following tags may contain different options listed [below](#options)  
 
 #### Sample file
-> title:Sample Post Title  
-> content:This is a sample content
+> title#:#Sample Post Title  
+> content#:#This is a sample content
 > This also is part of content
 > Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras egestas sem sit amet eleifend semper. Aenean tincidunt viverra enim vel eleifend. Pellentesque sed imperdiet lacus. Maecenas gravida erat nec nunc finibus, sit amet pretium eros porta. Mauris ipsum risus, porta non vehicula id, vehicula a metus. Donec venenatis porttitor orci, at lobortis enim. Curabitur massa diam, tincidunt eu mauris vitae, aliquet congue urna. Vestibulum maximus condimentum scelerisque. Aenean lacinia euismod dui eu tristique. Curabitur tincidunt congue sapien, venenatis pulvinar sapien sodales ac. Mauris vulputate maximus nunc nec tristique. Nam sit amet elementum augue. Aliquam erat volutpat.  
-> tags: this,is,a,simple,tag  
-> categories: this,is,a,simple,category  
+> tags#:#this,is,a,simple,tag  
+> categories#:#this,is,a,simple,category  
 
 This post will be rendered as shown [here](linktoscreenshot)
 

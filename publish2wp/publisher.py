@@ -30,9 +30,9 @@ class publish2wp:
         option = ''
         value = ''
         for line in filecontent:
-            if ':' in line:
-                option = line.split(':')[0]
-                value = line.split(':')[1]
+            if '#:#' in line:
+                option = line.split('#:#')[0]
+                value = line.split('#:#')[1]
             else:
                 value = value + '\n' + line
             postoptions[option] = value
