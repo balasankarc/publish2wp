@@ -22,6 +22,17 @@ import ssl
 
 class publish2wp:
 
+    def __init__(self, username, password, site, state):
+        self.username = username
+        self.password = password
+        self.site = site
+        self.state = state
+        if self.site[-1] != '/':
+            self.site = self.site + '/'
+        self.site = self.site + 'xmlrpc.php'
+        if 'http' not in self.site:
+            self.site = 'http://' + self.site
+
     def getpostdetails(self, postfile):
         '''Get details of the post to be published'''
         filecontent = postfile.readlines()
@@ -37,17 +48,6 @@ class publish2wp:
                 value = value + '\n' + line
             postoptions[option] = value
         return postoptions
-
-    def __init__(self, username, password, site, state):
-        self.username = username
-        self.password = password
-        self.site = site
-        self.state = state
-        if self.site[-1] != '/':
-            self.site = self.site + '/'
-        self.site = self.site + 'xmlrpc.php'
-        if 'http' not in self.site:
-            self.site = 'http://' + self.site
 
     def getfile(self, filename):
         try:
